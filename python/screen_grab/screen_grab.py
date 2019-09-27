@@ -14,7 +14,6 @@ import os
 
 from sgtk.platform.qt import QtCore, QtGui
 import sgtk
-from sgtk.dd_utils import dd_jstools_utils
 
 
 class ScreenGrabber(QtGui.QDialog):
@@ -262,13 +261,12 @@ class ExternalCaptureThread(QtCore.QThread):
 
             elif sys.platform == "linux2":
                 # use image magick
-                context = sgtk.platform.current_bundle().context
-                ret_code, error_msg = dd_jstools_utils.run_in_clean_env(["import", self._path], context)
+                ret_code = os.system("import %s" % self._path)
                 if ret_code != 0:
-                    raise sgtk.TankError("Screen capture tool returned error code: %s, message: `%s`."
+                    raise sgtk.TankError("Screen capture tool returned error code %s. "
                                          "For screen capture to work on Linux, you need to have "
                                          "the imagemagick 'import' executable installed and "
-                                         "in your PATH." % (ret_code, error_msg) )
+                                         "in your PATH." % ret_code)
 
             else:
                 raise sgtk.TankError("Unsupported platform.")
